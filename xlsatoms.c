@@ -27,6 +27,10 @@ in this Software without prior written authorization from The Open Group.
  * Author:  Peter Harris, Open Text Corporation
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -57,7 +61,9 @@ usage(const char *errmsg)
 	     "    -display dpy            X server to which to connect\n"
 	     "    -format string          printf-style format to use\n"
 	     "    -range [num]-[num]      atom values to list\n"
-	     "    -name string            name of single atom to print\n");
+	     "    -name string            name of single atom to print\n"
+	     "    -version                print program version\n"
+	);
     exit (1);
 }
 
@@ -100,6 +106,12 @@ main(int argc, char *argv[])
 			didit = 1;
 		    }
 		    continue;
+		  case 'v':
+		    if (strcmp(arg, "-version") == 0) {
+			puts(PACKAGE_STRING);
+			exit(0);
+		    }
+		    /* else FALLTHROUGH to unrecognized arg case below */
 		}
 	    }
 	    fprintf (stderr, "%s: unrecognized argument %s\n\n",
