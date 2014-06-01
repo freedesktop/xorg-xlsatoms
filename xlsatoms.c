@@ -47,8 +47,11 @@ static void list_atoms ( xcb_connection_t *c, const char *format, int mask,
 			 long low, long high );
 
 static void 
-usage(void)
+usage(const char *errmsg)
 {
+    if (errmsg != NULL)
+	fprintf (stderr, "%s: %s\n\n", ProgramName, errmsg);
+
     fprintf (stderr, "usage:  %s [-options...]\n\n%s\n", ProgramName,
 	     "where options include:\n"
 	     "    -display dpy            X server to which to connect\n"
@@ -76,22 +79,22 @@ main(int argc, char *argv[])
 	    if (arg[0] == '-') {
 		switch (arg[1]) {
 		  case 'd':			/* -display dpy */
-		    if (++i >= argc) usage ();
+		    if (++i >= argc) usage ("-display requires an argument");
 		    if (!doit) displayname = argv[i];
 		    continue;
 		  case 'f':			/* -format string */
-		    if (++i >= argc) usage ();
+		    if (++i >= argc) usage ("-format requires an argument");
 		    if (doit) format = argv[i];
 		    continue;
 		  case 'r':			/* -range num-[num] */
-		    if (++i >= argc) usage ();
+		    if (++i >= argc) usage ("-range requires an argument");
 		    if (doit) {
 			do_range (c, format, argv[i]);
 			didit = 1;
 		    }
 		    continue;
 		  case 'n':			/* -name string */
-		    if (++i >= argc) usage ();
+		    if (++i >= argc) usage ("-name requires an argument");
 		    if (doit) {
 			do_name (c, format, argv[i]);
 			didit = 1;
@@ -99,7 +102,9 @@ main(int argc, char *argv[])
 		    continue;
 		}
 	    }
-	    usage ();
+	    fprintf (stderr, "%s: unrecognized argument %s\n\n",
+		     ProgramName, arg);
+	    usage (NULL);
 	}
 	if (!doit) {
 	    DisplayString = displayname;
